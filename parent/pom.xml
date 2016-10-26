@@ -3,13 +3,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>fi.sardion</groupId>
+	<groupId>sardion</groupId>
 	<artifactId>parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}-${project.version}</name>
-	
+
 	<organization>
 		<name>Sardion Oy</name>
 		<url>http://sardion.fi</url>
@@ -23,7 +23,9 @@
 	</properties>
 
 	<modules>
-		<module>utilities</module>
+
+		<module>../../trukki/Payload</module>
+		<module>../utilities</module>
 	</modules>
 
 	<repositories>
@@ -59,9 +61,9 @@
 			<url>http://localhost:8081/artifactory/libs-snapshot-local</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
 	<pluginRepositories>
-	
+
 		<pluginRepository>
 			<snapshots>
 				<enabled>false</enabled>
@@ -99,28 +101,24 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.10</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
-
-	<dependencyManagement>
-
-		<dependencies>
-			<dependency>
-				<groupId>fi.sardion</groupId>
-				<artifactId>services</artifactId>
-				<version>${project.version}</version>
-				<type>jar</type>
-			</dependency>
-
-		</dependencies>
-	</dependencyManagement>
 
 	<build>
 		<plugins>

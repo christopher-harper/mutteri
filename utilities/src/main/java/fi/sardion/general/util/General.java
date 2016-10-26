@@ -1,13 +1,9 @@
 package fi.sardion.general.util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -190,6 +186,17 @@ public class General implements Serializable {
 
 	/** <p>
 	 * <ul>
+	 * <li>Created: 26 Oct 2016 17.51.03</li>
+	 * <li>Author: Christopher Harper, account: chris</li>
+	 * <li><code>SPECIAL = </code></li>
+	 * </ul>
+	 * </p>
+	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
+										(built by: chris) */
+	final static char[]					SPECIAL					= new char[] { '!', '#', '$', '%', '&', '(', ')', '*', '+', '-', '/', ':',
+			';', '=', '?', '@', '[', '\\', ']', '{', '|', '}' };
+	/** <p>
+	 * <ul>
 	 * <li>Created: 23 Oct 2016 11.27.04</li>
 	 * <li>Author: Christopher Harper, account: chris</li>
 	 * <li><code>LOGGER = {@link Logger}.{@link Logger#getLogger(Class) getLogger}({@link General}.class);</code></li>
@@ -198,6 +205,7 @@ public class General implements Serializable {
 	 * @since 0.0.1-SNAPSHOT-b53-23.10.2016 08:53:27.405
 	 *        (built by: chris) */
 	private static final Logger			LOGGER					= Logger.getLogger(General.class);
+
 	/** <p>
 	 * <ul>
 	 * <li>Created: 23 Oct 2016 11.30.38</li>
@@ -423,6 +431,24 @@ public class General implements Serializable {
 	 *        (built by: chris) */
 	public static final String getDuration(final long start) {
 		final long end = System.currentTimeMillis();
+		return General.getDuration(start, end);
+	}
+
+	/** <p>
+	 * TODO Write a method comment.
+	 * <ul>
+	 * <li>Created: 26 Oct 2016 18.47.25</li>
+	 * <li>Author: Christopher Harper, account: chris</li>
+	 * </ul>
+	 * </p>
+	 * @param start
+	 *            the start time.
+	 * @param end
+	 *            the end time.
+	 * @return the duration string in the following format [x week[s]] [x day[s]] xx:xx:xx.xxx.
+	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
+										(built by: chris) */
+	public static final String getDuration(final long start, final long end) {
 		long temp = 0;
 		final StringBuilder duration = new StringBuilder();
 		if (end > start) {
@@ -454,9 +480,9 @@ public class General implements Serializable {
 		duration.append(String.format("%02d", new Integer(count))).append(':'); //$NON-NLS-1$
 		temp = temp % General.MINUTE;
 		count = (int) (temp / General.SECOND);
-		duration.append(String.format("%02d", new Integer(count))).append(':'); //$NON-NLS-1$
+		duration.append(String.format("%02d", new Integer(count))).append('.'); //$NON-NLS-1$
 		temp = temp % General.SECOND;
-		duration.append(temp);
+		duration.append(String.format("%03d", new Integer((int) temp)));
 		return duration.toString().trim();
 	}
 
@@ -501,7 +527,7 @@ public class General implements Serializable {
 	 *            from what should the password be generated from.
 	 * @return the generated password.
 	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
+	 *        (built by: chris) */
 	public static String getGeneratedPassword(final String seed) {
 		return General.getGeneratedPassword(seed, 12);
 	}
@@ -518,58 +544,53 @@ public class General implements Serializable {
 	 * <li>Author: Christopher Harper, account: chris</li>
 	 * </ul>
 	 * </p>
-	 * @param seed
+	 * @param aSeed
 	 *            the string from which random characters are used.
 	 * @param length
 	 *            how long the generated password will be. Minimum length is 6.
 	 * @return the generated password.
 	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
-	public static String getGeneratedPassword(final String seed, final int length) {
-		if (length < 4) {
-			throw new IllegalArgumentException(String.format("Given %s password length too short. The minimum lenght required is four (4).", //$NON-NLS-1$
+	 *        (built by: chris) */
+	public static String getGeneratedPassword(final String aSeed, final int length) {
+		if (length < 6) {
+			throw new IllegalArgumentException(String.format("Given %s password length too short. The minimum lenght required is six (6).", //$NON-NLS-1$
 					String.valueOf(length)));
 		}
 		final StringBuilder password = new StringBuilder(length);
-		final int randomIndex = General.RANDOM.nextInt(length > 24 ? 23 : length) + 1;
+		/* Create a random character index which is always between one and the length, and also among the first 12 characters. */
+		final int randomIndex = General.RANDOM.nextInt(length > 12 ? 11 : length) + 1;
 		int div = General.RANDOM.nextInt(4) + 1;
-		final char[] special = new char[] { '!', '#', '$', '%', '&', '(', ')', '*', '+', '-', '/', ':', ';', '=', '?', '@', '[', '\\', ']',
-				'{', '|', '}' };
+		boolean previousWasNotRandom = true;
 		for (int index = 0; index < length; index++) {
-			if (randomIndex == index || length > 12 && (index + 2) % randomIndex == 0) {
-				password.append(special[General.RANDOM.nextInt(special.length)]);
+			if (previousWasNotRandom && (randomIndex == index || length > 12 && (index + 2) % randomIndex == 0)) {
+				password.append(General.SPECIAL[General.RANDOM.nextInt(General.SPECIAL.length)]);
+				previousWasNotRandom = false;
 			} else {
 				final int mod = (index + 1) % div;
 				switch (mod) {
 					case 1:
-						/* Upper case alphabet. */
-						password.append((char) (General.RANDOM.nextInt(26) + 65));
-						break;
-					case 2:
-						/* Lower case alphabet. */
-						password.append((char) (General.RANDOM.nextInt(26) + 97));
-						break;
-					case 3:
-						/* A number */
-						password.append((char) (General.RANDOM.nextInt(10) + 48));
-						break;
-					case 4:
 						char c;
-						if (seed == null) {
-							final char[] letter = new char[] { special[General.RANDOM.nextInt(special.length)],
+						if (aSeed == null) {
+							final char[] letter = new char[] { General.SPECIAL[General.RANDOM.nextInt(General.SPECIAL.length)],
 									(char) (General.RANDOM.nextInt(26) + 65), (char) (General.RANDOM.nextInt(26) + 97),
 									(char) (General.RANDOM.nextInt(10) + 48) };
 							c = letter[General.RANDOM.nextInt(letter.length)];
 						} else {
-							c = seed.charAt(General.RANDOM.nextInt(seed.length()));
-							if (c < 32 || c > 126) {
-								final char[] letter = new char[] { special[General.RANDOM.nextInt(special.length)],
-										(char) (General.RANDOM.nextInt(26) + 65), (char) (General.RANDOM.nextInt(26) + 97),
-										(char) (General.RANDOM.nextInt(10) + 48) };
-								c = letter[General.RANDOM.nextInt(letter.length)];
-							}
+							c = aSeed.charAt(General.RANDOM.nextInt(aSeed.length()));
 						}
 						password.append(c);
+						break;
+					case 2:
+						/* Upper case alphabet. */
+						password.append((char) (General.RANDOM.nextInt(26) + 65));
+						break;
+					case 3:
+						/* Lower case alphabet. */
+						password.append((char) (General.RANDOM.nextInt(26) + 97));
+						break;
+					case 4:
+						/* A number */
+						password.append((char) (General.RANDOM.nextInt(10) + 48));
 						break;
 					default:
 						final char[] letter = new char[] { (char) (General.RANDOM.nextInt(26) + 65),
@@ -582,6 +603,7 @@ public class General implements Serializable {
 				} else {
 					div--;
 				}
+				previousWasNotRandom = true;
 			}
 		}
 		return password.toString();
@@ -602,90 +624,9 @@ public class General implements Serializable {
 	 *            whose hash value to return.
 	 * @return the hash value of the keys and the values.
 	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
+	 *        (built by: chris) */
 	public static Long getHash(final Map<String, Object> map) {
 		return new Long(map.keySet().hashCode() + map.hashCode());
-	}
-
-	/** <p>
-	 * Get content of an template as a string.
-	 * <ul>
-	 * <li>Created: May 27, 2011 12:02:04 PM</li>
-	 * <li>Author: Christopher Harper, account: dmadmin</li>
-	 * </ul>
-	 * </p>
-	 * @param templateSpec
-	 *            the template details.
-	 * @return the template content.
-	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
-	public static final String getTemplate(final String templateSpec) {
-		if (templateSpec == null || templateSpec.trim().length() <= 0) {
-			General.LOGGER.debug("Attempt to read template from a null path."); //$NON-NLS-1$
-		} else {
-			General.LOGGER.debug(String.format("Returning template %s.", templateSpec)); //$NON-NLS-1$
-			final File template = General.findFile(templateSpec);
-			final StringBuilder builder = new StringBuilder();
-			try (final BufferedReader in = new BufferedReader(new FileReader(template))) {
-				String line = null;
-				while ((line = in.readLine()) != null) {
-					builder.append(line).append(General.LINEFEED);
-				}
-			} catch (final IOException ioex) {
-				final String message = String.format("Failed to read file %s into memory.", template.getAbsolutePath()); //$NON-NLS-1$
-				General.LOGGER.fatal(message, ioex);
-			}
-			return builder.toString();
-		}
-		return null;
-	}
-
-	/** <p>
-	 * Get an unicode string from an UTF-8 string.
-	 * <ul>
-	 * <li>Created: 23 Oct 2016 12.38.01</li>
-	 * <li>Author: Christopher Harper, account: chris</li>
-	 * </ul>
-	 * </p>
-	 * @param inUTF8
-	 *            the source string.
-	 * @return the string in unicode
-	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
-	public static final String getUnicodeFromUTF8(final String inUTF8) {
-		if (inUTF8 != null) {
-			try {
-				return new String(inUTF8.getBytes(), General.ENCODING_UTF_8);
-			} catch (final UnsupportedEncodingException exSwallow) {
-				General.LOGGER.debug(String.format("Failed to create a unicode representation of %s.", inUTF8), //$NON-NLS-1$
-						exSwallow);
-			}
-		}
-		return General.EMPTY;
-	}
-
-	/** <p>
-	 * Get an UTF-8 representation of a string.
-	 * <ul>
-	 * <li>Created: 23 Oct 2016 12.41.04</li>
-	 * <li>Author: Christopher Harper, account: chris</li>
-	 * </ul>
-	 * </p>
-	 * @param inUnicode
-	 *            the string to convert to unicode.
-	 * @return the converted string.
-	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
-	public static final String getUTF8FromUnicode(final String inUnicode) {
-		if (inUnicode != null) {
-			try {
-				return new String(inUnicode.getBytes(General.ENCODING_UTF_8));
-			} catch (final UnsupportedEncodingException exSwallow) {
-				General.LOGGER.debug(String.format("Failed to create a %s representation of %s.", General.ENCODING_UTF_8, inUnicode), //$NON-NLS-1$
-						exSwallow);
-			}
-		}
-		return General.EMPTY;
 	}
 
 	/** <p>
@@ -699,7 +640,7 @@ public class General implements Serializable {
 	 *            what to work on.
 	 * @return the escaped string.
 	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
+	 *        (built by: chris) */
 	public static String singleQuoteEscape(final String stringToEscape) {
 		if (stringToEscape == null || stringToEscape.length() == 0) {
 			return stringToEscape;
@@ -720,7 +661,7 @@ public class General implements Serializable {
 	 *            the key name that must be found from the map with a valid
 	 *            value.
 	 * @since 0.0.1-SNAPSHOT-b59-23.10.2016 09:52:54.747
-										(built by: chris) */
+	 *        (built by: chris) */
 	public static void validateRequired(final Map<String, Object> extraAttributes, final String attributeName) {
 		if (extraAttributes.containsKey(attributeName)) {
 			final Object data = extraAttributes.get(attributeName);

@@ -57,7 +57,7 @@ public class TestGeneral {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	@Test
 	public void testGetGeneratedPassword() {
 		this.testPassword(General.getGeneratedPassword(), 12, "");
@@ -71,7 +71,7 @@ public class TestGeneral {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	@Test
 	public void testGetGeneratedPasswordInt() {
 		final int length = this.RANDOM.nextInt(16) + 8;
@@ -86,7 +86,7 @@ public class TestGeneral {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	@Test
 	public void testGetGeneratedPasswordString() {
 		final String seed = "åöäÅÖÄ";
@@ -101,7 +101,7 @@ public class TestGeneral {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	@Test
 	public void testGetGeneratedPasswordStringInt() {
 		final int length = this.RANDOM.nextInt(16) + 8;
@@ -117,7 +117,7 @@ public class TestGeneral {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	@Test
 	public void testGetHash() {
 		final Map<String, Object> map = new HashMap<>();
@@ -135,7 +135,7 @@ public class TestGeneral {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	@Test
 	public void testSingleQuoteEscape() {
 		final String original = "O'leary";
@@ -151,7 +151,7 @@ public class TestGeneral {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	@Test
 	public void testValidateRequired() {
 		final Map<String, Object> required = new HashMap<>();
@@ -170,7 +170,7 @@ public class TestGeneral {
 	 * @param aLenght
 	 * @param aSeed
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	private void testPassword(final String password, final int aLenght, final String aSeed) {
 		if (password.length() < aLenght) {
 			Assert.fail(String.format("Failure validating password '%s'. It should be atleast %s characters long but in only %s.", password,
@@ -189,6 +189,7 @@ public class TestGeneral {
 					break;
 				}
 			}
+			System.out.println(password);
 			if (!found) {
 				Assert.fail(String.format("Failure validating password '%s'. It should have atleast one character from '%s'.", password,
 						String.valueOf(oneOfThese)));

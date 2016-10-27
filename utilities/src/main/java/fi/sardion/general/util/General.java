@@ -192,7 +192,7 @@ public class General implements Serializable {
 	 * </ul>
 	 * </p>
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	final static char[]					SPECIAL					= new char[] { '!', '#', '$', '%', '&', '(', ')', '*', '+', '-', '/', ':',
 			';', '=', '?', '@', '[', '\\', ']', '{', '|', '}' };
 	/** <p>
@@ -447,7 +447,7 @@ public class General implements Serializable {
 	 *            the end time.
 	 * @return the duration string in the following format [x week[s]] [x day[s]] xx:xx:xx.xxx.
 	 * @since 0.0.1-SNAPSHOT-b77-26.10.2016 18:58:07.992
-										(built by: chris) */
+	 *        (built by: chris) */
 	public static final String getDuration(final long start, final long end) {
 		long temp = 0;
 		final StringBuilder duration = new StringBuilder();
@@ -556,54 +556,55 @@ public class General implements Serializable {
 			throw new IllegalArgumentException(String.format("Given %s password length too short. The minimum lenght required is six (6).", //$NON-NLS-1$
 					String.valueOf(length)));
 		}
+		final int half = length / 2 - 3;
 		final StringBuilder password = new StringBuilder(length);
-		/* Create a random character index which is always between one and the length, and also among the first 12 characters. */
-		final int randomIndex = General.RANDOM.nextInt(length > 12 ? 11 : length) + 1;
+		General.RANDOM.nextInt(length > 12 ? 11 : length);
 		int div = General.RANDOM.nextInt(4) + 1;
-		boolean previousWasNotRandom = true;
 		for (int index = 0; index < length; index++) {
-			if (previousWasNotRandom && (randomIndex == index || length > 12 && (index + 2) % randomIndex == 0)) {
-				password.append(General.SPECIAL[General.RANDOM.nextInt(General.SPECIAL.length)]);
-				previousWasNotRandom = false;
+			final int mod;
+			if (index > half && index < half + 6) {
+				mod = index - half;
 			} else {
-				final int mod = (index + 1) % div;
-				switch (mod) {
-					case 1:
-						char c;
-						if (aSeed == null) {
-							final char[] letter = new char[] { General.SPECIAL[General.RANDOM.nextInt(General.SPECIAL.length)],
-									(char) (General.RANDOM.nextInt(26) + 65), (char) (General.RANDOM.nextInt(26) + 97),
-									(char) (General.RANDOM.nextInt(10) + 48) };
-							c = letter[General.RANDOM.nextInt(letter.length)];
-						} else {
-							c = aSeed.charAt(General.RANDOM.nextInt(aSeed.length()));
-						}
-						password.append(c);
-						break;
-					case 2:
-						/* Upper case alphabet. */
-						password.append((char) (General.RANDOM.nextInt(26) + 65));
-						break;
-					case 3:
-						/* Lower case alphabet. */
-						password.append((char) (General.RANDOM.nextInt(26) + 97));
-						break;
-					case 4:
-						/* A number */
-						password.append((char) (General.RANDOM.nextInt(10) + 48));
-						break;
-					default:
-						final char[] letter = new char[] { (char) (General.RANDOM.nextInt(26) + 65),
-								(char) (General.RANDOM.nextInt(26) + 97), (char) (General.RANDOM.nextInt(10) + 48) };
-						password.append(letter[General.RANDOM.nextInt(letter.length)]);
-						break;
-				}
-				if (div <= 1) {
-					div = 5;
-				} else {
-					div--;
-				}
-				previousWasNotRandom = true;
+				mod = (index + 1) % div;
+			}
+			switch (mod) {
+				case 1:
+					char c;
+					if (aSeed == null) {
+						final char[] letter = new char[] { General.SPECIAL[General.RANDOM.nextInt(General.SPECIAL.length)],
+								(char) (General.RANDOM.nextInt(26) + 65), (char) (General.RANDOM.nextInt(26) + 97),
+								(char) (General.RANDOM.nextInt(10) + 48) };
+						c = letter[General.RANDOM.nextInt(letter.length)];
+					} else {
+						c = aSeed.charAt(General.RANDOM.nextInt(aSeed.length()));
+					}
+					password.append(c);
+					break;
+				case 2:
+					password.append(General.SPECIAL[General.RANDOM.nextInt(General.SPECIAL.length)]);
+					break;
+				case 3:
+					/* Lower case alphabet. */
+					password.append((char) (General.RANDOM.nextInt(26) + 97));
+					break;
+				case 4:
+					final char[] letter = new char[] { (char) (General.RANDOM.nextInt(26) + 65), (char) (General.RANDOM.nextInt(26) + 97),
+							(char) (General.RANDOM.nextInt(10) + 48) };
+					password.append(letter[General.RANDOM.nextInt(letter.length)]);
+					break;
+				case 5:
+					/* Upper case alphabet. */
+					password.append((char) (General.RANDOM.nextInt(26) + 65));
+					break;
+				default:
+					/* A number */
+					password.append((char) (General.RANDOM.nextInt(10) + 48));
+					break;
+			}
+			if (div <= 1) {
+				div = 5;
+			} else {
+				div--;
 			}
 		}
 		return password.toString();

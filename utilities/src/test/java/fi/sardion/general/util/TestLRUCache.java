@@ -18,7 +18,8 @@ import junit.framework.Assert;
  * </p>
  * @author Christopher Harper, account: chris
  * @version %version%
- * @since %since% */
+ * @since 0.0.1-SNAPSHOT-b93-27.10.2016 17:44:40.272
+										(built by: chris) */
 public class TestLRUCache {
 
 	/** <p>
@@ -28,7 +29,8 @@ public class TestLRUCache {
 	 * <li>Author: Christopher Harper, account: chris</li>
 	 * </ul>
 	 * </p>
-	 * @since %since% */
+	 * @since 0.0.1-SNAPSHOT-b93-27.10.2016 17:44:40.272
+										(built by: chris) */
 	@Test
 	public void testCache() {
 		final Map<String, String> cache = new LRUCache<>(10);

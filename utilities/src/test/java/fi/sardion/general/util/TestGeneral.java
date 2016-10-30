@@ -189,7 +189,6 @@ public class TestGeneral {
 					break;
 				}
 			}
-			System.out.println(password);
 			if (!found) {
 				Assert.fail(String.format("Failure validating password '%s'. It should have atleast one character from '%s'.", password,
 						String.valueOf(oneOfThese)));
